@@ -1,0 +1,14 @@
+﻿说明：
+	天猫店铺列表页采集（按销量降序排列）
+
+采集其他店铺需修改：
+!1.main()中url、shop_id、店铺名
+!2.class()中job_id
+3.min_page_no和max_page_no
+!4.parse_page()中fld_url
+	
+
+	天猫店铺详情页采集
+采集其他店铺需修改：
+!1.do_main()中last_list_jobid
+

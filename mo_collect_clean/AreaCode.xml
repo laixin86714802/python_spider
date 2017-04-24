@@ -1,0 +1,535 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AreaCode>
+    <Province id="01" name="北京" >
+        <item code="010"  name="北京" />
+    </Province>
+    <Province id="02" name="上海" >
+        <item code="021"  name="上海" />
+    </Province>
+    <Province id="03" name="天津" >
+        <item code="022"  name="天津" />
+    </Province>
+    <Province id="04" name="重庆" >
+        <item code="023"  name="重庆" />
+    </Province>
+    <Province id="05" name="河北">
+        <item code="3100"  name="邯郸" />
+        <item code="3111"  name="石家庄" />
+        <item code="3112"  name="辛集" />
+        <item code="3123"  name="保定" />
+        <item code="3124"  name="定州" />
+        <item code="3125"  name="涿州" />
+        <item code="3136"  name="张家口" />
+        <item code="3147"  name="承德" />
+        <item code="3158"  name="唐山" />
+        <item code="3169"  name="廊坊" />
+        <item code="3170"  name="泊头" />
+        <item code="3171"  name="沧州" />
+        <item code="3172"  name="任丘" />
+        <item code="3183"  name="衡水" />
+        <item code="3194"  name="南宫" />
+        <item code="3195"  name="沙河" />
+        <item code="3196"  name="邢台" />
+        <item code="3357"  name="秦皇岛" />
+    </Province>
+    <Province id="06" name="山西">
+        <item code="3490"  name="朔州" />
+        <item code="3501"  name="忻州" />
+        <item code="3512"  name="太原" />
+        <item code="3523"  name="大同" />
+        <item code="3534"  name="阳泉" />
+        <item code="3545"  name="晋中" />
+        <item code="3546"  name="榆次" />
+        <item code="3557"  name="长治" />
+        <item code="3568"  name="晋城" />
+        <item code="3579"  name="侯马" />
+        <item code="3570"  name="临汾" />
+        <item code="3581"  name="吕梁区" />
+        <item code="3581"  name="汾阳" />
+        <item code="3592"  name="运城" />
+    </Province>
+    <Province id="07" name="内蒙古">
+        <item code="4700"  name="海拉尔" />
+        <item code="4701"  name="呼伦贝尔" />
+        <item code="4702"  name="满洲里" />
+        <item code="4703"  name="牙克石" />
+        <item code="4714"  name="呼和浩特" />
+        <item code="4725"  name="包头" />
+        <item code="4736"  name="乌海" />
+        <item code="4747"  name="集宁" />
+        <item code="4748"  name="乌兰察布" />
+        <item code="4759"  name="通辽" />
+        <item code="4760"  name="赤峰" />
+        <item code="4771"  name="东胜" />
+        <item code="4772"  name="鄂尔多斯" />
+        <item code="4783"  name="巴彦淖尔" />
+        <item code="4784"  name="临河" />
+        <item code="4795"  name="二连浩特" />
+        <item code="4796"  name="锡林郭勒" />
+        <item code="4797"  name="锡林浩特" />
+        <item code="4828"  name="乌兰浩特" />
+        <item code="4829"  name="兴安" />
+        <item code="4830"  name="阿拉善" />
+    </Province>
+    <Province id="08" name="辽宁">
+        <item code="240"  name="沈阳" />
+        <item code="4101"  name="铁岭" />
+        <item code="4102"  name="铁岭" />
+        <item code="4113"  name="大连" />
+        <item code="4114"  name="瓦房店" />
+        <item code="4125"  name="鞍山" />
+        <item code="4126"  name="海城" />
+        <item code="4137"  name="抚顺" />
+        <item code="4148"  name="本溪" />
+        <item code="4159"  name="丹东" />
+        <item code="4160"  name="锦州" />
+        <item code="4171"  name="营口" />
+        <item code="4182"  name="阜新" />
+        <item code="4193"  name="辽阳" />
+        <item code="4214"  name="北票" />
+        <item code="4215"  name="朝阳" />
+        <item code="4276"  name="盘锦" />
+        <item code="4297"  name="葫芦岛" />
+        <item code="4298"  name="锦西" />
+        <item code="4299"  name="兴城" />
+    </Province>
+    <Province id="09" name="吉林">
+        <item code="4310"  name="长春" />
+        <item code="4321"  name="桦甸" />
+        <item code="4322"  name="吉林" />
+        <item code="4333"  name="敦化" />
+        <item code="4334"  name="龙井" />
+        <item code="4335"  name="图门" />
+        <item code="4336"  name="延边" />
+        <item code="4337"  name="延吉" />
+        <item code="4348"  name="公主岭" />
+        <item code="4349"  name="四平" />
+        <item code="4350"  name="集安" />
+        <item code="4351"  name="通化" />
+        <item code="4362"  name="白城" />
+        <item code="4363"  name="洮南" />
+        <item code="4374"  name="辽源" />
+        <item code="4385"  name="扶余" />
+        <item code="4386"  name="松原" />
+        <item code="4397"  name="白山" />
+        <item code="4398"  name="浑江" />
+        <item code="4489"  name="梅河口" />
+    </Province>
+    <Province id="10" name="黑龙江">
+        <item code="4500"  name="阿城" />
+        <item code="4511"  name="哈尔滨" />
+        <item code="4512"  name="肇东" />
+        <item code="4523"  name="齐齐哈尔" />
+        <item code="4534"  name="牡丹江" />
+        <item code="4535"  name="绥汾河" />
+        <item code="4546"  name="佳木斯" />
+        <item code="4547"  name="同江" />
+        <item code="4558"  name="绥化" />
+        <item code="4569"  name="北安" />
+        <item code="4560"  name="黑河" />
+        <item code="4561"  name="五大连池" />
+        <item code="4572"  name="大兴安岭" />
+        <item code="4583"  name="伊春" />
+        <item code="4594"  name="大庆" />
+        <item code="4645"  name="七台河" />
+        <item code="4676"  name="鸡西" />
+        <item code="4687"  name="鹤岗" />
+        <item code="4698"  name="双鸭山" />
+    </Province>
+    <Province id="11" name="江苏">
+        <item code="250"   name="南京" />
+        <item code="5101"  name="江阴" />
+        <item code="5102"  name="无锡" />
+        <item code="5103"  name="宜兴" />
+        <item code="5114"  name="丹阳" />
+        <item code="5115"  name="镇江" />
+        <item code="5126"  name="苏州" />
+        <item code="5137"  name="南通" />
+        <item code="5148"  name="扬州" />
+        <item code="5149"  name="仪征" />
+        <item code="5150"  name="东台" />
+        <item code="5151"  name="盐城" />
+        <item code="5162"  name="徐州" />
+        <item code="5173"  name="淮安" />
+        <item code="5174"  name="淮阴" />
+        <item code="5185"  name="连云港" />
+        <item code="5196"  name="常州" />
+        <item code="5207"  name="常熟" />
+        <item code="5238"  name="泰州" />
+        <item code="5239"  name="兴化" />
+        <item code="5270"  name="宿迁" />
+    </Province>
+    <Province id="12" name="浙江">
+        <item code="5700"  name="江山" />
+        <item code="5701"  name="衢州" />
+        <item code="5712"  name="杭州" />
+        <item code="5713"  name="江干区" />
+        <item code="5714"  name="上城区" />
+        <item code="5715"  name="西湖区" />
+        <item code="5716"  name="下城区" />
+        <item code="5717"  name="萧山" />
+        <item code="5717"  name="临安" />
+        <item code="5728"  name="湖州" />
+        <item code="5739"  name="海宁" />
+        <item code="5730"  name="嘉兴" />
+        <item code="5741"  name="宁波" />
+        <item code="5742"  name="余姚" />
+        <item code="5753"  name="绍兴" />
+        <item code="5764"  name="椒江" />
+        <item code="5765"  name="临海" />
+        <item code="5766"  name="台州" />
+        <item code="5777"  name="乐清" />
+        <item code="5778"  name="瑞安" />
+        <item code="5779"  name="温州" />
+        <item code="5780"  name="丽水" />
+        <item code="5791"  name="东阳" />
+        <item code="5792"  name="金华" />
+        <item code="5793"  name="兰溪" />
+        <item code="5794"  name="义乌" />
+        <item code="5805"  name="舟山" />
+    </Province>
+    <Province id="13" name="安徽">
+        <item code="5500"  name="滁州" />
+        <item code="5511"  name="合肥" />
+        <item code="5522"  name="蚌埠" />
+        <item code="5533"  name="芜湖" />
+        <item code="5544"  name="淮南" />
+        <item code="5555"  name="马鞍山" />
+        <item code="5566"  name="安庆" />
+        <item code="5577"  name="宿州" />
+        <item code="5588"  name="阜阳" />
+        <item code="5589"  name="亳州" />
+        <item code="5590"  name="黄山" />
+        <item code="5611"  name="淮北" />
+        <item code="5622"  name="铜陵" />
+        <item code="5633"  name="宣城" />
+        <item code="5644"  name="六安" />
+        <item code="5655"  name="巢湖" />
+        <item code="5666"  name="池州" />
+    </Province>
+    <Province id="14" name="福建">
+        <item code="5910"  name="福州" />
+        <item code="5921"  name="厦门" />
+        <item code="5932"  name="宁德" />
+        <item code="5943"  name="莆田" />
+        <item code="5954"  name="泉州" />
+        <item code="5955"  name="石狮" />
+        <item code="5966"  name="漳州" />
+        <item code="5977"  name="龙岩" />
+        <item code="5988"  name="三明" />
+        <item code="5989"  name="永安" />
+        <item code="5990"  name="南平" />
+        <item code="5991"  name="邵武" />
+    </Province>
+    <Province id="15" name="江西">
+        <item code="7010"  name="鹰潭" />
+        <item code="7901"  name="新余" />
+        <item code="7912"  name="南昌" />
+        <item code="7923"  name="九江" />
+        <item code="7934"  name="上饶" />
+        <item code="7945"  name="抚州" />
+        <item code="7946"  name="临川" />
+        <item code="7957"  name="宜春" />
+        <item code="7968"  name="吉安" />
+        <item code="7969"  name="井冈山" />
+        <item code="7970"  name="赣州" />
+        <item code="7981"  name="景德镇" />
+        <item code="7992"  name="萍乡" />
+    </Province>
+    <Province id="16" name="山东">
+        <item code="5300"  name="菏泽" />
+        <item code="5311"  name="济南" />
+        <item code="5322"  name="青岛" />
+        <item code="5333"  name="淄博" />
+        <item code="5344"  name="德州" />
+        <item code="5355"  name="烟台" />
+        <item code="5366"  name="青州" />
+        <item code="5367"  name="潍坊" />
+        <item code="5368"  name="诸城" />
+        <item code="5379"  name="济宁" />
+        <item code="5370"  name="曲阜" />
+        <item code="5381"  name="泰安" />
+        <item code="5382"  name="新泰" />
+        <item code="5393"  name="临沂" />
+        <item code="5434"  name="滨州" />
+        <item code="5465"  name="东营" />
+        <item code="6316"  name="威海" />
+        <item code="6327"  name="藤州" />
+        <item code="6328"  name="枣庄" />
+        <item code="6339"  name="日照" />
+        <item code="6340"  name="莱芜" />
+        <item code="6351"  name="聊城" />
+        <item code="6352"  name="临清" />
+    </Province>
+    <Province id="17" name="河南">
+        <item code="3700"  name="商丘" />
+        <item code="3711"  name="郑州" />
+        <item code="3722"  name="安阳" />
+        <item code="3733"  name="新乡" />
+        <item code="3734"  name="长垣" />
+        <item code="3744"  name="许昌" />
+        <item code="3755"  name="平顶山" />
+        <item code="3766"  name="信阳" />
+        <item code="3777"  name="南阳" />
+        <item code="3788"  name="开封" />
+        <item code="3799"  name="洛阳" />
+        <item code="3910"  name="焦作" />
+        <item code="3911"  name="济源" />
+        <item code="3921"  name="鹤壁" />
+        <item code="3932"  name="濮阳" />
+        <item code="3943"  name="周口" />
+        <item code="3954"  name="漯河" />
+        <item code="3965"  name="驻马店" />
+        <item code="3986"  name="三门峡" />
+        <item code="3987"  name="义马" />
+    </Province>
+    <Province id="18" name="湖北">
+        <item code="270"   name="武汉" />
+        <item code="7101"  name="老河口" />
+        <item code="7102"  name="襄阳" />
+        <item code="7113"  name="鄂州" />
+        <item code="7124"  name="安陆" />
+        <item code="7125"  name="孝感" />
+        <item code="7126"  name="应城" />
+        <item code="7137"  name="黄冈" />
+        <item code="7138"  name="麻城" />
+        <item code="7139"  name="武穴" />
+        <item code="7140"  name="黄石" />
+        <item code="7151"  name="蒲昕" />
+        <item code="7152"  name="咸宁" />
+        <item code="7153"  name="潜江" />
+        <item code="7163"  name="荆州" />
+        <item code="7164"  name="沙市" />
+        <item code="7165"  name="石首" />
+        <item code="7176"  name="宜昌" />
+        <item code="7177"  name="枝城" />
+        <item code="7188"  name="恩施" />
+        <item code="7189"  name="利川" />
+        <item code="7190"  name="丹江口" />
+        <item code="7191"  name="十堰" />
+        <item code="7222"  name="随州" />
+        <item code="7243"  name="荆门" />
+        <item code="7284"  name="洪湖" />
+        <item code="7285"  name="天门" />
+        <item code="7286"  name="仙桃" />
+    </Province>
+    <Province id="19" name="湖南">
+        <item code="7310"  name="长沙" />
+        <item code="7321"  name="湘乡" />
+        <item code="7372"  name="益阳" />
+        <item code="7303"  name="汨罗" />
+        <item code="7364"  name="津市" />
+        <item code="7445"  name="大庸" />
+        <item code="7386"  name="连源" />
+        <item code="7457"  name="怀化" />
+        <item code="7348"  name="衡阳" />
+        <item code="7399"  name="邵阳" />
+        <item code="7460"  name="永州" />
+        <item code="7441"  name="张家界" />
+        <item code="7322"  name="湘潭" />
+        <item code="7333"  name="株洲" />
+        <item code="7304"  name="岳阳" />
+        <item code="7365"  name="常德" />
+        <item code="7436"  name="吉首" />
+        <item code="7387"  name="娄底" />
+        <item code="7388"  name="冷水江" />
+        <item code="7459"  name="洪江" />
+        <item code="7340"  name="耒阳" />
+        <item code="7351"  name="郴州" />
+        <item code="7382"  name="冷水江" />
+        <item code="7433"  name="湘西" />
+    </Province>
+    <Province id="20" name="广东">
+        <item code="200"   name="广州" />
+        <item code="6601"  name="汕尾" />
+        <item code="6622"  name="阳江" />
+        <item code="6633"  name="揭阳" />
+        <item code="6684"  name="茂名" />
+        <item code="7505"  name="江门" />
+        <item code="7516"  name="韶关" />
+        <item code="7527"  name="惠州" />
+        <item code="7538"  name="梅州" />
+        <item code="7549"  name="汕头" />
+        <item code="7550"  name="深圳" />
+        <item code="7561"  name="珠海" />
+        <item code="7572"  name="佛山" />
+        <item code="7583"  name="肇庆" />
+        <item code="7594"  name="湛江" />
+        <item code="7605"  name="中山" />
+        <item code="7626"  name="河源" />
+        <item code="7637"  name="清远" />
+        <item code="7668"  name="云浮" />
+        <item code="7689"  name="潮州" />
+        <item code="7690"  name="东莞" />
+    </Province>
+    <Province id="21" name="广西">
+        <item code="7600"  name="合山" />
+        <item code="7601"  name="柳州" />
+        <item code="7702"  name="防城港" />
+        <item code="7713"  name="南宁" />
+        <item code="7714"  name="凭祥" />
+        <item code="7715"  name="崇左" />
+        <item code="7735"  name="桂林" />
+        <item code="7746"  name="贺州" />
+        <item code="7747"  name="梧州" />
+        <item code="7758"  name="贵港" />
+        <item code="7759"  name="玉林" />
+        <item code="7760"  name="百色" />
+        <item code="7771"  name="钦州" />
+        <item code="7782"  name="河池" />
+        <item code="7793"  name="北海" />
+    </Province>
+    <Province id="22" name="海南">
+        <item code="8900"  name="儋州" />
+        <item code="8981"  name="海口" />
+        <item code="8982"  name="五指山" />
+        <item code="8983"  name="琼海" />
+        <item code="8993"  name="三亚" />
+    </Province>
+    <Province id="23" name="四川">
+        <item code="280"   name="成都" />
+        <item code="281"   name="都江堰" />
+        <item code="8122"  name="攀枝花" />
+        <item code="8133"  name="自贡" />
+        <item code="8164"  name="绵阳" />
+        <item code="8175"  name="南充" />
+        <item code="8186"  name="达州" />
+        <item code="8257"  name="遂宁" />
+        <item code="8268"  name="广安" />
+        <item code="8279"  name="巴中" />
+        <item code="8300"  name="泸州" />
+        <item code="8311"  name="宜宾" />
+        <item code="8322"  name="内江" />
+        <item code="8323"  name="资阳" />
+        <item code="8334"  name="乐山" />
+        <item code="8335"  name="眉山" />
+        <item code="8346"  name="凉山" />
+        <item code="8357"  name="雅安" />
+        <item code="8368"  name="甘孜" />
+        <item code="8379"  name="阿坝" />
+        <item code="8380"  name="德阳" />
+        <item code="8391"  name="广元" />
+    </Province>
+    <Province id="24" name="贵州">
+        <item code="8510"  name="贵阳" />
+        <item code="8521"  name="赤水" />
+        <item code="8522"  name="遵义" />
+        <item code="8533"  name="安顺" />
+        <item code="8544"  name="都匀" />
+        <item code="8545"  name="黔南" />
+        <item code="8556"  name="凯里" />
+        <item code="8557"  name="黔东南" />
+        <item code="8568"  name="铜仁" />
+        <item code="8579"  name="毕节" />
+        <item code="8580"  name="六盘水" />
+        <item code="8591"  name="黔西南" />
+        <item code="8592"  name="兴义" />
+    </Province>
+    <Province id="25" name="云南">
+        <item code="691"  name="西双版纳" />
+        <item code="692"  name="德宏" />
+        <item code="870"  name="昭通" />
+        <item code="871"  name="昆明" />
+        <item code="872"  name="大理" />
+        <item code="872"  name="大理" />
+        <item code="873"  name="个旧" />
+        <item code="873"  name="红河" />
+        <item code="873"  name="开远" />
+        <item code="874"  name="曲靖" />
+        <item code="875"  name="保山" />
+        <item code="876"  name="文山" />
+        <item code="877"  name="玉溪" />
+        <item code="878"  name="楚雄" />
+        <item code="879"  name="普洱" />
+        <item code="881"  name="东川" />
+        <item code="883"  name="临沧" />
+        <item code="886"  name="怒江" />
+        <item code="887"  name="迪庆" />
+        <item code="888"  name="丽江" />
+    </Province>
+    <Province id="26" name="西藏">
+        <item code="0891"  name="拉萨" />
+        <item code="0892"  name="日喀则" />
+        <item code="0893"  name="山南" />
+    </Province>
+    <Province id="27" name="陕西">
+        <item code="290"   name="西安" />
+        <item code="9101"  name="咸阳" />
+        <item code="9112"  name="延安" />
+        <item code="9123"  name="榆林" />
+        <item code="9134"  name="韩城" />
+        <item code="9135"  name="渭南" />
+        <item code="9146"  name="商洛" />
+        <item code="9157"  name="安康" />
+        <item code="9168"  name="汉中" />
+        <item code="9179"  name="宝鸡" />
+        <item code="9190"  name="铜川" />
+    </Province>
+    <Province id="28" name="甘肃">
+        <item code="9300"  name="临夏" />
+        <item code="9311"  name="兰州" />
+        <item code="9322"  name="定西" />
+        <item code="9333"  name="平凉" />
+        <item code="9344"  name="庆阳" />
+        <item code="9345"  name="西峰" />
+        <item code="9356"  name="武威" />
+        <item code="9367"  name="张掖" />
+        <item code="9378"  name="嘉峪关" />
+        <item code="9379"  name="金昌" />
+        <item code="9370"  name="酒泉" />
+        <item code="9371"  name="玉门" />
+        <item code="9382"  name="天水" />
+        <item code="9393"  name="陇南" />
+        <item code="9414"  name="甘南" />
+        <item code="9435"  name="白银" />
+    </Province>
+    <Province id="29" name="青海">
+        <item code="9700"  name="海北" />
+        <item code="9711"  name="西宁" />
+        <item code="9722"  name="海东" />
+        <item code="9733"  name="黄南" />
+        <item code="9744"  name="海南" />
+        <item code="9755"  name="果洛" />
+        <item code="9766"  name="玉树" />
+        <item code="9777"  name="德令哈" />
+        <item code="9778"  name="海西" />
+        <item code="9799"  name="格尔木" />
+    </Province>
+    <Province id="30" name="宁夏">
+        <item code="9510"  name="银川" />
+        <item code="9521"  name="石嘴山" />
+        <item code="9532"  name="青铜峡" />
+        <item code="9533"  name="吴忠" />
+        <item code="9544"  name="固原" /> 
+    </Province>
+    <Province id="31" name="新疆">
+        <item code="9010"  name="塔城地区" />
+        <item code="9021"  name="哈密地区" />
+        <item code="9032"  name="和田" />
+        <item code="9063"  name="阿勒泰" />
+        <item code="9084"  name="阿图什" />
+        <item code="9085"  name="克州" />
+        <item code="9096"  name="博州" />
+        <item code="9907"  name="克拉玛依" />
+        <item code="9918"  name="乌鲁木齐" />
+        <item code="9929"  name="奎屯" />
+        <item code="9920"  name="伊犁" />
+        <item code="9931"  name="石河子" />
+        <item code="9942"  name="昌吉" />
+        <item code="9953"  name="吐鲁番" />
+        <item code="9964"  name="巴州" />
+        <item code="9965"  name="库尔勒" />
+        <item code="9976"  name="阿克苏" />
+        <item code="9987"  name="喀什" />
+        <item code="9998"  name="伊宁" />
+    </Province>
+    <Province id="32" name="台湾">
+        <item code="8864"  name="台中" />
+    </Province>
+    <Province id="33" name="香港">
+        <item code="852"  name="香港" />
+    </Province>
+    <Province id="34" name="澳门">
+        <item code="853"  name="澳门" />
+    </Province>
+</AreaCode>

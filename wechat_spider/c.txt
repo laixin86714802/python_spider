@@ -1,0 +1,6 @@
+sql = '''SELECT `channel`, `catId`, `keyword` FROM wechat_table WHERE id > 266 and id < 518'''
+
+sql = '''SELECT `channel`, `catId`, `keyword` FROM wechat_table WHERE id > 907 and id < 1278'''
+sql = '''SELECT `channel`, `catId`, `keyword` FROM wechat_table WHERE id > 1288 and id < 1658'''
+sql = '''SELECT `channel`, `catId`, `keyword` FROM wechat_table WHERE id > 1669 and id < 2038'''
+sql = '''SELECT `channel`, `catId`, `keyword` FROM wechat_table WHERE id > 2047'''

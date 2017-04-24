@@ -1,0 +1,58 @@
+#!/usr/bin/python
+# coding:utf-8
+# Copyright (C) 2005-2016 All rights reserved.
+# FILENAME: 	 data_proc_class.py
+# VERSION: 	 1.0
+# CREATED: 	 2016-02-26 14:41
+# AUTHOR: 	 xuexiang
+# DESCRIPTION:
+#
+# HISTORY:
+#*************************************************************
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+import comm.PLog
+import comm.requests_pkg
+import conf.app_conf
+import conf.class_conf
+import conf.db_conf
+from comm.db_helper import db_helper_class
+import comm.job_report
+from comm.JobSta import JobSta
+from comm.MyHttpDownFailed import MyHttpDownFailed
+from comm.MyHttpParseFailed import MyHttpParseFailed
+
+
+class data_proc_class():
+
+    def __init__(self):
+        self.db_oper = db_helper_class(conf.db_conf)
+        # 分页大小
+        self.page_size = 20
+        # 读取偏移值
+        self.r_offset = 0
+
+        # 当前进度
+        self.curr_prog = 0
+        # 总共丢弃记录数
+        self.drop_count = 0
+        pass
+
+    def __del__(self):
+        pass
+
+    def do_main(self):
+        
+        pass
+
+    def proc_one_com(self, com_id):
+        self.r_offset = 0
+        self.curr_prog = 0
+        self.drop_count = 0
+        comm.PLog.Log("开始处理")
+
+        #产品的当前价格
+        this_prod_price = 0
+        sql = "

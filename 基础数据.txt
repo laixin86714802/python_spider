@@ -1,0 +1,49 @@
+delete from bas_app_conf;
+delete from bas_class_conf;
+
+
+
+/***********************************************************************/
+/*9个自营官网价格数据采集*/
+insert into bas_app_conf(nAppId, sAppName) values(100, '自营PC官网价格采集');
+
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100000, '健客网PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100001, '壹药网PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100002, '康爱多PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100003, '康德乐PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100004, '健一网PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100005, '老百姓PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100006, '亿生康PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100007, '云开PC采集');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(100, 100008, '康之家PC采集');
+
+/***********************************************************************/
+/*淘宝活动抢购*/
+insert into bas_app_conf(nAppId, sAppName) values(101, '淘宝活动抢购');
+
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(101, 800001, '淘宝活动抢购');
+
+/***********************************************************************/
+/*天猫处方药-列表*/
+insert into bas_app_conf(nAppId, sAppName) values(102, '天猫处方药列表更新');
+
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(102, 800002,
+'康爱多天猫处理方列表更新');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(102, 800003,
+'健客天猫处理方列表更新');
+
+/***********************************************************************/
+/*天猫处方药-详情*/
+insert into bas_app_conf(nAppId, sAppName) values(103, '天猫处方药详情');
+
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(103, 800004,
+'康爱多天猫处理方详情');
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(103, 800005,
+'健客天猫处理方详情');
+
+/***********************************************************************/
+/*康爱多套装疗程疗程装*/
+insert into bas_app_conf(nAppId, sAppName) values(104, '康爱多官网套装疗程装');
+
+insert into bas_class_conf(nAppId, nClassId, sClassName) values(104, 800006,
+'康爱多官网套装疗程装');

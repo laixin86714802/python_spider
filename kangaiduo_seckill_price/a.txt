@@ -1,0 +1,18 @@
+[
+{"id":1264113,"itemId":50186434,"productName":"【阿拓莫兰5盒优惠装】","mainId":938584,"recommendPrice":340.0,"originalPrice":335.0,"materialtype":"TCP","details":[{"areaItemId":938584,"comboId":0,"detailPriority":1000,"detailCount":5,"detailType":1,"detailStatus":1,"detailPrice":67.0,"minusPrice":1.0}]},
+
+
+{"id":1264110,"itemId":50186433,"productName":"【阿拓莫兰2盒优惠装】","mainId":938584,"recommendPrice":136.0,"originalPrice":135.0,"materialtype":"TCP","details":[{"areaItemId":938584,"comboId":0,"detailPriority":1000,"detailCount":2,"detailType":1,"detailStatus":1,"detailPrice":67.5,"minusPrice":0.5}]},
+{"id":1140416,"itemId":50104447,"productName":"【阿拓莫兰10盒优惠装】","mainId":938584,"recommendPrice":680.0,"originalPrice":660.0,"materialtype":"TCP","details":[{"areaItemId":938584,"comboId":0,"detailPriority":1000,"detailCount":10,"detailType":1,"detailStatus":1,"detailPrice":66.0,"minusPrice":2.0}]},
+
+原价
+{"id":938584,"itemId":50028186,"productName":"阿拓莫兰 谷胱甘肽片 0.1g*36片","mainId":0,"recommendPrice":90.5,"originalPrice":68.0,"materialtype":"ZSP","details":null}]
+
+名称
+productName
+价格
+originalPrice
+数量
+detailCount
+
+details":null

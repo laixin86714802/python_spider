@@ -1,0 +1,66 @@
+#!/usr/bin/python
+# coding:utf-8
+# Copyright (C) 2005-2016 All rights reserved.
+# FILENAME: 	 job_report.py
+# VERSION: 	 1.0
+# CREATED: 	 2016-02-23 11:37
+# AUTHOR: 	 xuexiang
+# DESCRIPTION:   作业状态上报
+#
+# HISTORY:
+#*************************************************************
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+import time
+
+#**********************************************************************
+# 描  述： 初始化报作业报告
+#
+# 参  数： all_task_cnt, 总任务量
+#
+# 返回值： 空
+# 修  改：
+#**********************************************************************
+
+
+def report_init(self, all_task_cnt):
+    try:
+        fld_inserttime = time.strftime("%Y-%m-%d %H:%M:%S")
+
+        sql = "insert into tb_xzq_job_stat_report(nAppId, sJobId, nAllTaskCnt, \
+                sJobStartTime, sState, sInsertTime ) \
+                values(%s, %s, %s, %s, %s, %s)"
+        value = (self.app_id,
+                 self.job_id,
+                 all_task_cnt,
+                 fld_inserttime,
+                 "doing",
+                 fld_inserttime)
+        self.db_oper.exe_insert(sql, value)
+    except:
+        pass
+
+
+def report_complate(self):
+    try:
+        fld_inserttime = time.strftime("%Y-%m-%d %H:%M:%S")
+
+        ok_rate = "%.2f" % (self.job_stat.down_ok_count /
+                            float(self.job_stat.all_task_count))
+        sql = "update tb_xzq_job_stat_report set nNormalCnt=%s, \
+                nDownFailedCnt=%s, nParseFailedCnt=%s, nOtherFailedCnt=%s, \
+                fSucessRate=%s, sState='%s', sJobEndTime='%s', sInsertTime='%s' \
+                where sJobId='%s'" % (self.job_stat.down_ok_count,
+                                      self.job_stat.down_failed_count,
+                                      self.job_stat.parse_failed_count,
+                                      self.job_stat.other_failed_count,
+                                      ok_rate,
+                                      "complate",
+                                      fld_inserttime,
+                                      fld_inserttime,
+                                      self.job_id)
+        self.db_oper.exe_update(sql)
+    except:
+        pass

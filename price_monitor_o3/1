@@ -1,0 +1,891 @@
+#!/usr/bin/python
+# coding:utf-8
+# Copyright (C) 2005-2016 All rights reserved.
+# FILENAME: 	 pm_collect_class.py
+# VERSION: 	 1.0
+# CREATED: 	 2016-02-22 13:17
+# AUTHOR: 	 xuexiang
+# DESCRIPTION:   自主官网数据采集
+#
+# HISTORY:
+#*************************************************************
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+import re
+import time
+import conf
+import comm.PLog
+import comm.stone_funs
+import comm.requests_pkg
+import conf.app_conf
+import conf.class_conf
+import conf.db_conf
+from comm.db_helper import db_helper_class
+from comm.MyHttpDownFailed import MyHttpDownFailed
+from comm.MyHttpParseFailed import MyHttpParseFailed
+from comm.JobSta import JobSta
+
+
+class pm_collect_class():
+
+    def __init__(self):
+        self.db_oper = db_helper_class(conf.db_conf)
+        # 分页大小
+        self.page_size = 20
+        # 读取偏移值
+        self.r_offset = 0
+
+    def __del__(self):
+        pass
+
+    # 健客网-100000
+    def do_jkw_main(self):
+        self.app_id = 1000
+        self.web_id = 100000
+        self.web_name = "健客网"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_jkw()
+
+    # 壹药网-100001
+    def do_yyw_main(self):
+        self.app_id = 1001
+        self.web_id = 100001
+        self.web_name = "壹药网"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_yyw()
+
+    # 康爱多-100002
+    def do_kad_main(self):
+        self.app_id = 1002
+        self.web_id = 100002
+        self.web_name = "康爱多"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_kad()
+
+    # 康德乐-100003
+    def do_kdl_main(self):
+        self.app_id = 1003
+        self.web_id = 100003
+        self.web_name = "康德乐"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_kdl()
+
+    # 健一网-100004
+    def do_jyw_main(self):
+        self.app_id = 1004
+        self.web_id = 100004
+        self.web_name = "健一网"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_jyw()
+
+    # 老百姓-100005
+    def do_lbx_main(self):
+        self.app_id = 1005
+        self.web_id = 100005
+        self.web_name = "老百姓"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_lbx()
+
+    # 老百姓-100006
+    def do_ysk_main(self):
+        self.app_id = 1006
+        self.web_id = 100006
+        self.web_name = "亿生康"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_ysk()
+
+    # 云开-100007
+    def do_yk_main(self):
+        self.app_id = 1007
+        self.web_id = 100007
+        self.web_name = "云开"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_yk()
+
+    # 康之家-100008
+    def do_kzj_main(self):
+        self.app_id = 1008
+        self.web_id = 100008
+        self.web_name = "康之家"
+
+        self.job_stat = JobSta()
+        self.job_id = "%s_%s" % (time.strftime('T%Y%m%d_%H%M'), self.web_id)
+
+        self.do_task_kzj()
+
+    # 健客网
+    def do_task_jkw(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select  count(distinct jk_prod_id) from bas_comp_url"
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+        comm.job_report.report_start(
+            self.app_id,
+            self.class_id,
+            self.job_id,
+            self.job_stat.all_task_count,
+            self.db_oper)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct jk_prod_id, jk_prod_name from bas_comp_url  limit %d offset %d" % (
+                self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['jk_prod_id']))
+                    url = "http://www.jianke.com/product/%s.html" % data_row[
+                        'jk_prod_id']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+                    re_price = re.search(
+                        r'''(?:<dl\sclass="assort\sbigPrice">.*?)(?P<sPrice>[\d\.]+)(?:</em></dd>)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["jk_prod_id"]
+                    fld_prod_name = data_row["jk_prod_name"]
+                    fld_prod_price = float(re_price.group("sPrice"))
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 壹药网
+    def do_task_yyw(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:"name"\s*:\s*")(?P<sName>[^"]*?)(?:")''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:"price"\s*:\s*")(?P<sPrice>[\d\.]+)(?:")''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = re_product_name.group("sName")
+                    fld_prod_price = float(re_price.group("sPrice"))
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 康爱多
+    def do_task_kad(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:Yprodes_t.*?<h1>)(?P<sName>[^<]*?)(?:</h1>)''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:"h_Price"[^<]*?value=')(?P<sPrice>[\d\.]+)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = re_product_name.group("sName")
+                    fld_prod_price = float(re_price.group("sPrice"))
+
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 康德乐
+    def do_task_kdl(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:pro_det.*?<h1>)(?P<sName>[^<]*?)(?:\s*<)''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:id="ECS_SHOPPRICE">.*?</em>)(?P<sPrice>[\d\.]+)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = re_product_name.group("sName")
+                    fld_prod_price = float(re_price.group("sPrice"))
+
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 健一网
+    def do_task_jyw(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:detailnav.*?<strong>\s*)(?P<sName>[^<]*?)(?:\s*</strong>)''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:discount_price.*?value=")(?P<sPrice>[\d\.]+)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = re_product_name.group("sName")
+                    fld_prod_price = float(re_price.group("sPrice"))
+
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 老百姓: 产品名由两部分组成
+    def do_task_lbx(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:detailPas">.*?<a[^>]*?>)(?P<sName1>[^<]*?)(?:</a>\s*)(?P<sName2>[^<]*?)(?:\s*</h1>)''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:lblPrice">)(?P<sPrice>[\d\.]+)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = re_product_name.group(
+                        "sName1") + re_product_name.group("sName2")
+                    fld_prod_price = float(re_price.group("sPrice"))
+
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 亿生康
+    def do_task_ysk(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:pro_det.*?<h1>)(?P<sName>[^<]*?)(?:</h1>)''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:p-price[^>]*?>.*?)(?P<sPrice>[\d\.]+)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = re_product_name.group("sName")
+                    fld_prod_price = float(re_price.group("sPrice"))
+
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 云开
+    def do_task_yk(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:<h1\sid="goods_name">\s*)(?P<sName>[^<]*?)(?:\s*</h1>)''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:price">)(?P<sPrice>[\d\.]+)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = re_product_name.group("sName")
+                    fld_prod_price = float(re_price.group("sPrice"))
+
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    # 康之家
+    def do_task_kzj(self):
+        comm.PLog.Log("开始处理%s." % self.web_name)
+
+        # 获取总任务量
+        sql = "select count(distinct comp_prod_id) from bas_comp_url where comp_id='%s'" % self.web_id
+        self.job_stat.all_task_count = self.db_oper.get_count(sql)
+        comm.PLog.Log("总任务数:%d" % self.job_stat.all_task_count)
+        # 初始化Job Report
+        self.report_init(self.job_stat.all_task_count)
+
+        curr_counter = 0
+
+        while True:
+            sql = "select distinct comp_prod_id, url from bas_comp_url where comp_id='%s' \
+                   limit %d offset %d" % (self.web_id, self.page_size, self.r_offset)
+            (line_cnt, data_set) = self.db_oper.exe_search(sql)
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                comm.PLog.Log("站点采集结束.")
+                break
+
+            for data_row in data_set:
+                print "=================================================="
+                curr_counter += 1
+                comm.PLog.Log("采集进度:%d/%d, 下载失败:%d, 解析失败:%d" %
+                              (curr_counter, self.job_stat.all_task_count,
+                               self.job_stat.down_failed_count, self.job_stat.parse_failed_count))
+
+                # 产品ID
+                fld_prod_id = ""
+                # 产品名称
+                fld_prod_name = ""
+                # 产品价格
+                fld_prod_price = 0.0
+
+                try:
+                    comm.PLog.Log("%s 产品Id: %s" %
+                                  (self.web_name, data_row['comp_prod_id']))
+                    url = data_row['url']
+                    html_resp = comm.requests_pkg.get(
+                        url, conf.max_http_retry_cnt)
+                    if html_resp is None:
+                        raise MyHttpDownFailed()
+
+                    # 转换为UTF8编码
+                    html_content = comm.stone_funs.ToUtf8(html_resp.content)
+
+                    re_product_name = re.search(
+                        r'''(?:"product-intro".*?<h1><img[^>]*?>)(?:&nbsp;)*(?P<sName1>[^<]*?)(?:</h1>\s*<span[^>]*?>)(?P<sName2>[^<]*?)(?:<)''', html_content, re.S | re.I )
+                    if re_product_name is None:
+                        raise MyHttpParseFailed()
+
+                    re_price = re.search(
+                        r'''(?:<em\sid="rprice">)(?P<sPrice>[\d\.]+)''',
+                        html_content,
+                        re.S | re.I)
+                    if re_price is None:
+                        raise MyHttpParseFailed()
+
+                    fld_prod_id = data_row["comp_prod_id"]
+                    fld_prod_name = "%s %s" % (re_product_name.group(
+                        "sName1"), re_product_name.group("sName2"))
+                    fld_prod_price = float(re_price.group("sPrice"))
+
+                    comm.PLog.Log("product: %s" % fld_prod_name)
+                    comm.PLog.Log("price=%.2f" % fld_prod_price)
+
+                    self.job_stat.down_ok_count += 1
+                except MyHttpDownFailed as ex:
+                    comm.PLog.Log("下载异常!")
+                    self.job_stat.down_failed_count += 1
+                except:
+                    comm.PLog.Log("解析异常!")
+                    self.job_stat.parse_failed_count += 1
+                finally:
+                    # 入库
+                    self.load_to_db(fld_prod_id, fld_prod_name, fld_prod_price)
+
+        # 写统计报告
+        self.report_complate()
+
+    def load_to_db(self, fld_prod_id, fld_prod_name, fld_prod_price):
+        fld_inserttime = time.strftime("%Y-%m-%d %H:%M:%S")
+        sql = "insert into tab_product_comp_hour values(%s, %s, %s, %s, %s)"
+
+        value = (self.web_id,
+                 fld_prod_id,
+                 fld_prod_name,
+                 fld_prod_price,
+                 fld_inserttime)
+        self.db_oper.exe_insert(sql, value)
+        comm.PLog.Log("入库完成")
+

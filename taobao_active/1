@@ -1,0 +1,227 @@
+#!/usr/bin/python
+# coding:utf-8
+# Copyright (C) 2005-2016 All rights reserved.
+# FILENAME: 	 taobao_active_class.py
+# VERSION: 	 1.0
+# CREATED: 	 2016-01-12 12:45
+# AUTHOR: 	 xuexiang
+# DESCRIPTION:   抓取淘宝活动数据
+#
+# HISTORY:
+#*************************************************************
+import requests
+from active_extractor import CommExtractor
+import re
+import time
+import comm.PLog
+import comm.stone_funs
+from comm.db_helper import db_helper_class
+from Item import Item
+from WebkitBrowser import WebkitBrowser
+
+
+class taobao_active_class():
+
+    def __init__(self):
+        self.db_oper = db_helper_class()
+
+    def __del__(self):
+        pass
+
+    #**********************************************************************
+    # 描  述： 单页抓取
+    #
+    # 参  数： category, 活动分类
+    # 参  数： target_url, 目标链接
+    #
+    # 返回值： 空
+    # 修  改：
+    #**********************************************************************
+
+    def parse(self, category, target_url):
+        browser = WebkitBrowser()
+        resp_content = browser.open(target_url)
+        PLog.TempLog("browser.log", resp_content)
+        if resp_content:
+            # 记录原始原页
+            PLog.TempLog("src.log", resp_content)
+
+            # 去噪处理
+            re_pure_data = re.search(
+                CommExtractor.payload_puredata,
+                resp_content, re.S | re.I)
+
+            if re_pure_data is None:
+                PLog.Log("[WARNING] 去噪失败!")
+            else:
+                PLog.Log("去噪成功.")
+
+                # 预计总计录数
+                re_itemcnt = re.search(
+                    CommExtractor.payload_productcnt,
+                    re_pure_data.group(),
+                    re.S | re.I)
+                PLog.Log("预计条目数: %s" % (re_itemcnt.group("sProductCount")))
+
+                # 分析抢购进行中的数据
+                num1 = self.proc_qg_doing(category, re_pure_data.group())
+                PLog.Log("抢购进行中抓取数量:%d" % (num1))
+
+                # 分析已经抢购完成的数据
+                num2 = self.proc_qg_complted(category, re_pure_data.group())
+                PLog.Log("抢购已完成抓取数量:%d" % (num2))
+
+                num3 = self.proc_qg_notbegin(category, re_pure_data.group())
+                PLog.Log("抢购未开始抓取数量:%d" % (num3))
+
+                num4 = num1 + num2 + num3
+                PLog.Log("总抓取数量:%d" % (num4))
+
+    #**********************************************************************
+    # 描  述： 处理已经完成的抢购
+    #
+    # 参  数： payload_puredata, 提纯数据
+    #
+    # 返回值： 空
+    # 修  改：
+    #**********************************************************************
+    def proc_qg_complted(self, category, payload_puredata):
+        # 实际抓取数量
+        capture_count = 0
+
+        re_record_blockIt = re.finditer(
+            CommExtractor.payload_record_block_left0,
+            payload_puredata,
+            re.S | re.I)
+        if re_record_blockIt is None:
+            PLog.Log("[WARNING] payload_record_block_left0匹配失败!")
+        else:
+            for record in re_record_blockIt:
+                rem = re.search(
+                    CommExtractor.payload_record_info_left0,
+                    record.group(),
+                    re.S | re.I)
+                if rem is None:
+                    PLog.Log("rem is None")
+                else:
+                    # 新建一个记录对象
+                    item = Item()
+                    item.category = category
+                    item.title = rem.group("sTitle")
+                    item.subtitle = rem.group("sSubTitle")
+                    item.price = rem.group("sPrice")
+                    item.rate = "100%"
+                    item.num = rem.group("sNum")
+                    item.url = ""
+
+                    capture_count += 1
+                    self.load_to_db(item)
+
+        return capture_count
+
+    #**********************************************************************
+    # 描  述： 处理还在进行中的抢购
+    #
+    # 参  数： payload_puredata, 提纯数据
+    #
+    # 返回值： 空
+    # 修  改：
+    #**********************************************************************
+    def proc_qg_doing(self, category, payload_puredata):
+        # 实际抓取数量
+        capture_count = 0
+
+        re_record_blockIt = re.finditer(
+            CommExtractor.payload_record_block_left99,
+            payload_puredata,
+            re.S | re.I)
+        if re_record_blockIt is None:
+            PLog.Log("[WARNING] payload_record_block_left99匹配失败!")
+        else:
+            PLog.TempLog("pure.log", payload_puredata)
+
+            for record in re_record_blockIt:
+                rem = re.search(
+                    CommExtractor.payload_record_info_left99,
+                    record.group(),
+                    re.S | re.I)
+                if rem is None:
+                    PLog.Log("rem is None")
+                else:
+                    # 新建一个记录对象
+                    item = Item()
+                    item.category = category
+                    item.title = rem.group("sTitle")
+                    item.subtitle = rem.group("sSubTitle")
+                    item.price = rem.group("sPrice")
+                    item.rate = rem.group("sRete")
+                    item.num = rem.group("sNum")
+                    item.url = rem.group("sUrl")
+
+                    capture_count += 1
+                    self.load_to_db(item)
+
+        return capture_count
+
+    #**********************************************************************
+    # 描  述： 没有开抢的产品
+    #
+    # 参  数： payload_puredata, 提纯数据
+    #
+    # 返回值： 空
+    # 修  改：
+    #**********************************************************************
+    def proc_qg_notbegin(self, category, payload_puredata):
+        # 实际抓取数量
+        capture_count = 0
+
+        re_record_blockIt = re.finditer(
+            CommExtractor.payload_record_block_notbegin,
+            payload_puredata,
+            re.S | re.I)
+        if re_record_blockIt is None:
+            PLog.Log("[WARNING] payload_record_block_notbegin匹配失败!")
+        else:
+            PLog.TempLog("pure.log", payload_puredata)
+
+            for record in re_record_blockIt:
+                rem = re.search(
+                    CommExtractor.payload_record_info_notbegin,
+                    record.group(),
+                    re.S | re.I)
+                if rem is None:
+                    PLog.Log("rem is None")
+                else:
+                    # 新建一个记录对象
+                    item = Item()
+                    item.category = category
+                    item.title = rem.group("sTitle")
+                    item.subtitle = rem.group("sSubTitle")
+                    item.price = rem.group("sPrice")
+                    item.rate = "0%"
+                    item.num = "0"
+                    item.url = rem.group("sUrl")
+
+                    capture_count += 1
+                    self.load_to_db(item)
+
+        return capture_count
+
+    def load_to_db(self, item):
+        fld_inserttime = time.strftime(
+            '%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
+        sql = "insert into tb_xzq_taobao_qghd(sCategory, sTitle, sSubTitle, fPrice, sRate, nNum, sUrl, sInsertTime)values(%s, %s, %s, %s, %s, %s, %s, %s)"
+
+        vals = (
+            item.category,
+            item.title,
+            item.subtitle,
+            item.price,
+            item.rate,
+            item.num,
+            item.url,
+            fld_inserttime
+        )
+
+        # 实时入库
+        self.db_oper.exe_insert(sql, vals)

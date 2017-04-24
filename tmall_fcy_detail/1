@@ -1,0 +1,253 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+# Copyright (C) 2005-2016 All rights reserved.
+# FILENAME: 	 TmSpider.py
+# VERSION: 	 1.0
+# CREATED: 	 2016-01-04 15:22
+# AUTHOR: 	 xuexiang
+# DESCRIPTION:   天猫详页下载
+#
+# HISTORY:
+#*************************************************************
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+import re
+import urlparse
+import chardet
+import hashlib
+import time
+import requests
+import HTMLParser
+import MySQLdb
+from db_helper import db_helper_class
+
+# 通用处理器
+from comm_processor import CommProcessor
+# 通用规则提取器
+from ffy_extractor import CommExtractor
+# 随机用户代理
+import db_conf
+import requests_pkg
+
+
+class tmall_fcy_detail_calss():
+
+    def __init__(self):
+        self.db_oper = db_helper_class()
+        # 分页大小
+        self.page_size = 20
+        # 读取偏移值
+        self.r_offset = 0
+
+        # 当前进度
+        self.curr_prog = 0
+        # 总共丢弃记录数
+        self.drop_count = 0
+
+        #任务Id
+        self.task_id = ""
+
+    def __del__(self):
+        pass
+
+    def do_task_main(self, company):
+        self.r_offset = 0 
+        self.curr_prog = 0
+        self.drop_count = 0
+        self.task_id = ""
+
+        #获取最近的任务Id
+        sql = " select sTaskId from tb_xzq_task_state where sClass ='list_fcy_%s' and sState='complate' order by id desc limit 1" % company
+        (line_cnt, tbl_datas) = self.db_oper.exe_search(sql)
+        if line_cnt == 0:
+            CommProcessor.Log("没有找到%s的任务Id") 
+            return
+        else:
+            self.task_id = tbl_datas[0][0]
+            CommProcessor.Log("%s的最新任务是%s" % ( company, self.task_id))
+            self.do_task(self.task_id)
+
+
+    #**********************************************************************
+    # 描  述： 执行任务
+    #
+    # 参  数： task_id, 任务id
+    #
+    # 返回值： 空
+    # 修  改： 
+    #**********************************************************************
+    def do_task(self, task_id):
+        while True:
+            # 从数据库分页读取数据
+            sql = "select sTargetUrl, sCarryingInfo from tb_xzq_tmall_downtask3 where sTaskId='%s' limit %d offset %d" % ( task_id, self.page_size, self.r_offset)
+            (line_cnt, tbl_datas) = self.db_oper.exe_search(sql)
+
+            self.r_offset += self.page_size
+
+            if line_cnt == 0:
+                CommProcessor.Log("处理结束.")
+                return
+
+            for (sTargetUrl, sCarryInfo) in tbl_datas:
+                time.sleep(2)
+                CommProcessor.Log("--------------------------------------")
+                CommProcessor.Log("下载目标: %s" % sTargetUrl)
+                CommProcessor.Log(
+                    "已经下载数:%d, 5次重试丢弃数%d" %
+                    (self.curr_prog, self.drop_count))
+
+                try:
+                    # 详情页用requests提取
+                    resp = requests_pkg.get(sTargetUrl, max_try=5)
+                    if resp:
+                        item = eval(sCarryInfo)
+                        self.parse_detail(sTargetUrl, resp.content, item)
+                    else:
+                        self.drop_count += 1
+                        CommProcessor.Log("重试5次均失败, 放弃!")
+                except:
+                    pass
+
+    def parse_detail(self, req_url, response_body, item):
+        CommProcessor.Log("请求详情.")
+        #CommProcessor.saveTargetUrls(req_url)
+
+        # 判断是否需要登录
+        CommProcessor.is_need_login(response_body)
+
+        content_type = chardet.detect(response_body)
+        if content_type['encoding'] != "UTF-8":
+            response_body = response_body.decode(
+                content_type['encoding'], 'ignore')
+            response_body = response_body.encode("utf-8", 'ignore')
+
+        # 写日志页面日志
+        str_targetmd5 = item["fld_targetmd5"]
+        #CommProcessor.saveTargetLog(response_body, str_targetmd5)
+
+        # 去噪
+        re_pure_data = re.search(
+            CommExtractor.target_puredata,
+            response_body, re.S | re.I)
+
+        if re_pure_data is None:
+            # 重新请求
+            CommProcessor.Log("目标页去噪匹配不到，重新请求:" + req_url)
+            try:
+                # 详情页用requests提取
+                resp = requests_pkg.get(req_url, max_try=5)
+                if resp:
+                    self.parse_detail(req_url, resp.content, item)
+                else:
+                    self.drop_count += 1
+                    CommProcessor.Log("重试5次均失败, 放弃!")
+            except:
+                pass
+        else:
+            self.curr_prog += 1
+            html_parser = HTMLParser.HTMLParser()
+
+            # 产品Id
+            re_productid = re.search(
+                r'''(?:&id=)(?P<sId>\d+)''', item["fld_url"], re.S | re.I )
+            if re_productid:
+                item["fld_productid"] = "".join(
+                    re_productid.group("sId"))
+                CommProcessor.Log("产品ID: %s" % item["fld_productid"])
+
+            # 产品价格
+            re_price = re.search(
+                r'''(?:"defaultItemPrice":")(?P<sPrice>[\d\.]+)''',
+                response_body,
+                re.S | re.I)
+            if re_price:
+                item["fld_price"] = "".join(re_price.group("sPrice"))
+
+            # 产品名称
+            re_prodname = re.search(
+                r'''(?:<li[^>]*?>产品名称：)(?P<sProductName>[^<]*?)(?:</li>)''',
+                re_pure_data.group("sReserve"), re.S | re.I)
+            if re_prodname:
+                item["fld_productname"] = "".join(
+                    re_prodname.group("sProductName"))
+                item["fld_productname"] = CommProcessor.apaptRemoveSpace(
+                    item["fld_productname"])
+            else:
+                item["fld_productname"] = ""
+
+            # 药品通用名
+            re_goodsname = re.search(
+                r'''(?:>药品名称:\s*)(?P<sGoodsname>[^<]*?)(?:</li>)''',
+                re_pure_data.group("sReserve"), re.S | re.I)
+            if re_goodsname:
+                item["fld_commname"] = "".join(
+                    re_goodsname.group("sGoodsname"))
+                item["fld_commname"] = html_parser.unescape(
+                    CommProcessor.apaptRemoveSpace(item["fld_commname"]))
+            else:
+                item["fld_commname"] = ""
+
+            # 批准文号
+            re_approvalno = re.search(
+                r'''(?:>批准文号:.*?)(?P<sApprovalno>[A-Z\d]{6,})(?:[^<>]*</li>)''',
+                re_pure_data.group("sReserve"), re.S | re.I)
+            if re_approvalno:
+                item["fld_approvalno"] = "".join(
+                    re_approvalno.group("sApprovalno"))
+                item["fld_approvalno"] = html_parser.unescape(
+                    CommProcessor.apaptRemoveSpace(item["fld_approvalno"]))
+            else:
+                item["fld_approvalno"] = ""
+
+            # 规格
+            re_spec = re.search(
+                r'''(?:>药品规格:\s*)(?P<sSpec>[^<]*?)(?:</li>)''',
+                re_pure_data.group("sReserve"), re.S | re.I)
+            if re_spec:
+                item["fld_Spec"] = "".join(re_spec.group("sSpec"))
+                item["fld_Spec"] = html_parser.unescape(
+                    CommProcessor.apaptRemoveSpace(item["fld_Spec"]))
+            else:
+                item["fld_Spec"] = ""
+
+            # 当前时间
+            item["fld_inserttime"] = time.strftime(
+                '%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
+
+            # 直接重定向
+            CommProcessor.Log("重定向输出")
+            CommProcessor.output(item)
+            self.load_to_db(item)
+
+    def load_to_db(self, item):
+        CommProcessor.Log("目标入库.")
+
+        try:
+            fld_inserttime = time.strftime(
+                '%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
+            sql = "insert into tb_xzq_tmall_fcy_collect( sCompany, sPayloadMd5, sTargetMd5, sProductId, sProductName, fPrice, sApprovalNo, sSpec, sUrl, sInserttime, sRemark) values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+            vals = (
+                item["fld_company"],
+                item["fld_payloadmd5"],
+                item["fld_targetmd5"],
+                item["fld_productid"],
+                item["fld_caption"],
+                item["fld_price"],
+                item["fld_approvalno"],
+                item["fld_Spec"],
+                item["fld_url"],
+                fld_inserttime,
+                item["fld_remark"]
+            )
+
+            # 实时入库
+            self.db_oper.exe_insert(sql, vals)
+            CommProcessor.Log("完成.")
+        except IOError as e:
+            print e
+        except:
+            info = sys.exc_info()
+            print info[0], ":", info[1]

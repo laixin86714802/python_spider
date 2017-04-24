@@ -1,0 +1,7 @@
+
+需求说明：
+   您好！为方便提高淘抢购通过率及对了解消费者对产品需求，请帮忙看下以下两个链接里的产品是否可以每天抓取数据出来，以作分析。所需要抓取的数据包含：标题、副标题、促销价、已抢百分比、已抢件数。如下图。
+
+医疗保健：https://qiang.taobao.com/category.htm?spm=a21bz.7725273.a2150hs.14.4sdbyC&categoryId=131
+美妆：https://qiang.taobao.com/category.htm?spm=a21bz.7725275.a2150hs.5.YoIXmx&categoryId=34
+

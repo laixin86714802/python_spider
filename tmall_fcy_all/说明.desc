@@ -1,0 +1,20 @@
+grant all on *.* to data@'%' identified by "jianke@data123";
+grant all on *.* to data@'localhost' identified by "jianke@data123";
+grant all on *.* to data@'da01.htest' identified by "jianke@data123";
+
+
+
+mysql -hlocalhost -uroot -pjianke@data123
+mysql -h172.16.240.98 -uroot -pjianke@ceshi123
+
+
+grant all on *.* to root@'%' identified by "jianke@ceshi123";
+grant all on *.* to root@'localhost' identified by "jianke@ceshi123";
+grant all on *.* to root@'localhost.localdomain' identified by "jianke@ceshi123";
+
+
+=========================================
+
+load data local infile './out.dat'  into  table tbTmallCollect fields terminated by '##' ( sCompany, sPayloadMd5, sTargetMd5, sProductId, sProductName, sCommName, sCaption, fPrice, sApprovalNo, sSpec, sUrl, sInserttime, sRemark);
+
+
